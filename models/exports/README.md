@@ -1,5 +1,5 @@
-# Approved inference bundles
+# Local inference bundles
 
-Store approved, immutable model exports with a bundle manifest and model card.
-Approval requires validated thresholds, slice results, and geometry review. No
-export or inference backend exists in this scaffold.
+This directory can hold pretrained inference bundles once they are available.
+No model is included or automatically downloaded by the current scaffold.
+Use `reconstruct --model PATH` to record an explicit model selection in a dry-run.

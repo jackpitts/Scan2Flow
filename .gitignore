@@ -30,7 +30,6 @@ models/**
 !models/**/
 !models/**/README.md
 !models/**/.gitkeep
-!models/MODEL_CARD_TEMPLATE.md
 artifacts/**
 !artifacts/**/
 !artifacts/**/README.md
@@ -42,5 +41,5 @@ mlruns/
 wandb/
 *.log
 
-# Personal scratch notes; shared development decisions remain versioned.
+# Local working material
 .local-notes/

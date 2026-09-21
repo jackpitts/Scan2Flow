@@ -1,6 +1,6 @@
 # Scan2Flow user CLI reference
 
-This is the public command contract. For installation and examples, see [README.md](../README.md). Model creation and training are maintained separately by the developers.
+For installation and examples, see [README.md](../README.md).
 
 ## CLI reference
 
@@ -19,7 +19,7 @@ python -m scan2flow [-h | --help] [--version] COMMAND ...
 | `--version` | Print `scan2flow 0.1.0.dev0` and exit `0`; use before a subcommand |
 | `COMMAND` | Required unless requesting help/version: `reconstruct`, `prepare-cfd`, or `doctor` |
 
-Use command-specific options after the command. Each command also has `-h`/`--help`. Names are case-sensitive and option abbreviations are disabled. No arguments produces a usage error (`2`). There are no positional file arguments or implicit default commands. `train` and `evaluate` have been removed; both return a usage error (`2`).
+Use command-specific options after the command. Each command also has `-h`/`--help`. Names are case-sensitive and option abbreviations are disabled. No arguments produces a usage error (`2`). There are no positional file arguments or implicit default commands.
 
 ### Shared workflow behavior
 
@@ -140,10 +140,3 @@ release. Users do not prepare a dataset or run training. `--model PATH` is an
 optional override for a compatible exported inference bundle, not optimizer or
 training-resume state. A distribution mechanism and model loader have not been
 implemented, so omission and override both remain planning-only today.
-
-## Migrating from the initial scaffold
-
-The initial development commands `train` and `evaluate` are no longer public.
-Reconstruction no longer requires `--checkpoint`; remove that argument, or replace
-it with `--model` only when selecting a pretrained inference bundle explicitly.
-`--seed` is no longer public. No automatic training or implicit download occurs.

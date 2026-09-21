@@ -15,6 +15,3 @@ are illustrative and are not validated for your object.
 The scaffold records `--domain` but does not read TOML or create geometry.
 A future backend must reject unknown keys, incompatible units and disagreement
 between the configuration and `--flow`.
-
-Training and model-evaluation templates belong to [developer tooling](../development/configs/README.md),
-not this user configuration directory.
