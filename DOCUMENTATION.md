@@ -124,6 +124,9 @@ flag solely to expose an optimizer or research parameter.
 
 ## Documentation ownership and privacy
 
+Personal development-tool choices and assistant configuration are private. Keep
+them out of project documentation, generated distributions and commit messages.
+
 | Location | Purpose | Version control |
 | --- | --- | --- |
 | `README.md`, `docs/CLI_REFERENCE.md`, `docs/CFD_GUIDE.md` | User setup, commands and geometry use | Tracked |
@@ -145,7 +148,6 @@ start; do not treat `.gitignore` as access control.
 - [Architecture and backend environment](development/ARCHITECTURE.md)
 - [Detailed ML design](development/ML_PIPELINE.md)
 - [Developer configuration templates](development/configs/README.md)
-- [ECC development workflow](development/ECC_WORKFLOW.md)
 - [Data and artifact schemas](schemas/README.md)
 - [Repository layout](docs/PROJECT_STRUCTURE.md)
 - [Contribution and validation workflow](CONTRIBUTING.md)

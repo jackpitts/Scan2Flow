@@ -56,7 +56,6 @@ Scan2Flow/
 │   ├── training/
 │   │   └── __init__.py
 │   ├── ARCHITECTURE.md
-│   ├── ECC_WORKFLOW.md
 │   └── ML_PIPELINE.md
 ├── docs/
 │   ├── CFD_GUIDE.md
@@ -153,7 +152,7 @@ Scan2Flow/
 | `tests/fixtures/` | Tiny licensed/synthetic fixtures; no private or large capture assets |
 | `configs/` | User CFD-domain templates |
 | `development/configs/` | Developer-only training/evaluation experiments |
-| `development/` | Architecture, ML design, ECC guidance and developer tooling; outside the runtime wheel |
+| `development/` | Architecture, ML design and developer tooling; outside the runtime wheel |
 | `schemas/` | Versioned data, calibration, bundle and report contracts |
 | `examples/` | Readable CLI examples and deliberately incomplete sample records |
 | `data/raw/` | Immutable local image/video/LiDAR captures |

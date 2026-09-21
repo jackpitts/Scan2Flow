@@ -69,8 +69,6 @@ A surface mesh stores triangles; a B-rep stores bounded surfaces and topology. C
 
 ### Architectural choices and alternatives
 
-The architecture was developed with the installed [affaan-m/ECC](https://github.com/affaan-m/ECC) plugin. [ECC_WORKFLOW.md](ECC_WORKFLOW.md) records the skills and setup instructions used.
-
 | Choice | Rationale | Alternative and consequence |
 |---|---|---|
 | Local modular Python CLI | Batch workflows suit capture processing; a small parser remains easy to install | A service would add deployment and API concerns outside the CLI requirement |

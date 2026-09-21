@@ -6,7 +6,7 @@ Read [DOCUMENTATION.md](DOCUMENTATION.md) before starting: it defines the curren
 
 ## Local setup
 
-Follow the platform-specific virtual-environment instructions in [README.md](README.md#installation). Install the development tools with `python -m pip install -e ".[dev]"`. See [ECC_WORKFLOW.md](development/ECC_WORKFLOW.md) for the optional ECC contributor workflow used to develop this foundation.
+Follow the platform-specific virtual-environment instructions in [README.md](README.md#installation). Install the development tools with `python -m pip install -e ".[dev]"`.
 
 Create a branch from the current default branch:
 

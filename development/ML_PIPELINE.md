@@ -2,7 +2,7 @@
 
 > **Implementation status:** this is the engineering specification for a planned reconstruction backend. The repository supplies a CLI scaffold, not trained weights, a training loop, a CAD reconstruction engine, or demonstrated reconstruction accuracy. Only the end-user commands accept and validate arguments; `--dry-run` prints a plan without opening inputs or configurations. End-user execution without `--dry-run` reports an unavailable backend with exit code `3`. Training and evaluation have no executable entry point yet and are not public CLI commands.
 
-This design applies the [affaan-m/ECC machine learning workflow](https://github.com/affaan-m/everything-claude-code/blob/main/skills/mle-workflow/SKILL.md): define the prediction and data contracts, compare reproducible baselines, evaluate important slices, package complete artifacts, and retain a tested rollback path. ECC guides development; it is not an inference dependency or a pretrained Scan2Flow model.
+The development workflow defines prediction and data contracts, compares reproducible baselines, evaluates important slices, packages complete artifacts, and retains a tested rollback path.
 
 ## 1. Prediction contract
 

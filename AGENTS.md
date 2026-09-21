@@ -3,6 +3,8 @@
 - Read `DOCUMENTATION.md` first for the product scope, implemented state, current
   milestone, open decisions and next step. Read the relevant development guide
   before changing geometry, model or data contracts.
+- Keep personal development tools and assistant configuration private. Do not
+  name or describe them in project files, generated artifacts or commit messages.
 - The public CLI serves end users: reconstruction, CFD preparation and diagnostics.
   Training and model evaluation belong to developer tooling under `development/`.
   Do not add them to the public CLI or require users to train a model.
