@@ -1,0 +1,112 @@
+# Proposed backend contract; the current CLI never reads this file.
+schema_version = "0.1.0"
+experiment_name = "hybrid-reconstruction-baseline"
+
+[dataset]
+asset_paths_relative_to = "manifest_directory"
+train_manifest = "data/manifests/train.jsonl"
+validation_manifest = "data/manifests/validation.jsonl"
+record_schema = "schemas/dataset-record.schema.json"
+require_asset_checksums = true
+require_known_scale = true
+reject_missing_cad_targets = true
+
+[split_policy]
+# Every connected component sharing ANY of these identifiers stays in one split.
+disjoint_identifiers = ["object_id", "family_id", "capture_session"]
+keep_synthetic_derivatives_with_parent = true
+freeze_test_split = true
+reject_cross_split_duplicates = true
+
+[preprocessing]
+version = "geometry-v1-proposed"
+canonical_units = "m"
+world_up_axis = "+Z"
+image_size = [512, 512]
+image_resize_policy = "letterbox_update_intrinsics"
+max_views = 16
+frame_step = 30
+max_frames = 300
+# The frame limit is total across all clips for one object's reconstruction.
+point_count = 16384
+voxel_size_m = 0.002
+preserve_observation_mask = true
+persist_normalization_transform = true
+
+[augmentation]
+# Applied to training only; transform CAD targets and camera poses consistently.
+color_jitter = true
+point_dropout_probability = 0.05
+point_noise_std_m = 0.0005
+random_rigid_rotation = true
+random_nonuniform_scale = false
+
+[model]
+architecture = "hybrid_surface_and_feature_baseline"
+image_encoder = "resnet18"
+image_encoder_pretrained = false
+point_encoder = "pointnet"
+fusion = "masked_cross_attention"
+surface_decoder = "signed_distance_mlp"
+cad_feature_decoder = "primitive_parameters_and_adjacency"
+feature_classes = ["plane", "cylinder", "cone", "sphere", "torus", "freeform"]
+predict_observed_vs_inferred_regions = true
+predict_uncertainty = true
+
+[optimization]
+epochs = 100
+batch_size = 2
+gradient_accumulation_steps = 4
+optimizer = "adamw"
+learning_rate = 0.0001
+weight_decay = 0.01
+scheduler = "cosine"
+mixed_precision = false
+gradient_clip_norm = 1.0
+early_stopping_patience = 15
+
+[loss]
+# Dimensionless weights; normalize geometry by object extent for loss calculation.
+surface_distance = 1.0
+normal_consistency = 0.1
+silhouette = 0.5
+feature_classification = 0.2
+feature_parameter_regression = 0.5
+adjacency = 0.1
+eikonal = 0.1
+missing_annotation_policy = "mask_and_report"
+
+[validation]
+every_n_epochs = 1
+objective = "symmetric_chamfer_l1_m"
+objective_direction = "min"
+surface_sample_count = 10000
+fscore_distance_m = 0.001
+report_slices = ["modality", "family_id", "sensor", "occlusion", "material"]
+metrics = ["symmetric_chamfer_l1_m", "hausdorff95_m", "fscore", "normal_consistency", "dimension_relative_error", "valid_brep_rate", "watertight_rate", "abstention_rate"]
+
+[promotion]
+enabled = false
+threshold_status = "unset_requires_case_validation"
+missing_metric_policy = "fail"
+require_case_review = true
+require_threshold_policy = true
+require_baseline_comparison = true
+require_slice_review = true
+require_geometry_review = true
+
+[reproducibility]
+record_git_revision = true
+record_environment = true
+record_config_hash = true
+record_dataset_hash = true
+save_optimizer_and_rng_state = true
+deterministic_algorithms = true
+on_nondeterministic_operation = "error"
+
+[artifacts]
+weights_format = "safetensors"
+bundle_schema = "schemas/model-bundle.schema.json"
+save_preprocessing_contract = true
+save_model_card = true
+save_rejected_examples = true

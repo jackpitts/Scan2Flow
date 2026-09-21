@@ -1,0 +1,11 @@
+include README.md DOCUMENTATION.md CONTRIBUTING.md LICENSE .gitattributes .gitignore
+recursive-include docs *.md
+recursive-include configs *.md *.toml
+recursive-include schemas *.md *.json
+recursive-include examples *.md *.json *.jsonl
+recursive-include tests *.py *.md
+recursive-include data README.md
+recursive-include models README.md MODEL_CARD_TEMPLATE.md
+recursive-include artifacts README.md
+recursive-include notebooks *.md
+recursive-include scripts *.md

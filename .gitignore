@@ -1,0 +1,43 @@
+# Python environments, caches, and distribution output
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Local secrets and editor/OS state
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Keep directory guidance, exclude datasets, model binaries, and generated runs.
+data/**
+!data/**/
+!data/**/README.md
+!data/**/.gitkeep
+models/**
+!models/**/
+!models/**/README.md
+!models/**/.gitkeep
+!models/MODEL_CARD_TEMPLATE.md
+artifacts/**
+!artifacts/**/
+!artifacts/**/README.md
+!artifacts/**/.gitkeep
+
+# Research and experiment cache
+.ipynb_checkpoints/
+mlruns/
+wandb/
+*.log

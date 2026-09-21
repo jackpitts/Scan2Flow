@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jackpitts/Scan2Flow/schemas/reconstruction-report.schema.json",
+  "title": "Proposed Scan2Flow reconstruction quality report",
+  "description": "Geometry review evidence only, never a guarantee of CFD solution accuracy. This schema is not yet emitted or enforced by the CLI.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "model_id", "decision", "scale", "tolerance_m", "deviation_reference", "metrics", "checks", "human_review", "limitations", "outputs"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "model_id": {"type": "string", "minLength": 1},
+    "decision": {"enum": ["accepted_for_cfd_preparation", "needs_review", "rejected"]},
+    "scale": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "source", "output_unit"],
+      "properties": {
+        "status": {"enum": ["known", "estimated", "unknown"]},
+        "source": {"type": "string", "minLength": 1},
+        "output_unit": {"enum": ["m", "cm", "mm"]},
+        "relative_uncertainty": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "tolerance_m": {"type": "number", "exclusiveMinimum": 0},
+    "deviation_reference": {"enum": ["cad_ground_truth", "held_out_scan", "observed_input", "unavailable"]},
+    "metrics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["observed_coverage", "symmetric_chamfer_l1_m", "hausdorff95_m", "dimension_relative_error"],
+      "properties": {
+        "observed_coverage": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "symmetric_chamfer_l1_m": {"$ref": "#/$defs/nonnegativeOrNull"},
+        "hausdorff95_m": {"$ref": "#/$defs/nonnegativeOrNull"},
+        "dimension_relative_error": {"$ref": "#/$defs/nonnegativeOrNull"}
+      }
+    },
+    "checks": {
+      "type": "object", "additionalProperties": false,
+      "required": ["brep_valid", "watertight", "manifold", "self_intersections", "positive_volume", "dimension_policy", "observed_coverage_policy"],
+      "properties": {
+        "brep_valid": {"$ref": "#/$defs/check"},
+        "watertight": {"$ref": "#/$defs/check"},
+        "manifold": {"$ref": "#/$defs/check"},
+        "self_intersections": {"$ref": "#/$defs/check"},
+        "positive_volume": {"$ref": "#/$defs/check"},
+        "dimension_policy": {"$ref": "#/$defs/check"},
+        "observed_coverage_policy": {"$ref": "#/$defs/check"}
+      }
+    },
+    "human_review": {"enum": ["pending", "approved", "rejected"]},
+    "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "outputs": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "format", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "format": {"enum": ["step", "stl"]},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"decision": {"const": "accepted_for_cfd_preparation"}}},
+      "then": {
+        "properties": {
+          "scale": {"properties": {"status": {"const": "known"}}},
+          "human_review": {"const": "approved"},
+          "deviation_reference": {"enum": ["cad_ground_truth", "held_out_scan", "observed_input"]},
+          "metrics": {
+            "properties": {
+              "observed_coverage": {"type": "number"},
+              "symmetric_chamfer_l1_m": {"type": "number"},
+              "hausdorff95_m": {"type": "number"},
+              "dimension_relative_error": {"type": "number"}
+            }
+          },
+          "checks": {"additionalProperties": {"properties": {"status": {"const": "pass"}}}},
+          "outputs": {"minItems": 1}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "nonnegativeOrNull": {"type": ["number", "null"], "minimum": 0},
+    "check": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "evidence"],
+      "properties": {
+        "status": {"enum": ["pass", "fail", "not_run", "unknown"]},
+        "evidence": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

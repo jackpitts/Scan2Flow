@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.1.0",
+  "translation_unit": "m",
+  "world_frame": "right_handed_z_up",
+  "scale_status": "assumed",
+  "scale_source": "Illustrative values only; no measured camera rig or assets exist.",
+  "sensors": {
+    "camera_front": {
+      "kind": "camera",
+      "world_from_sensor": [[1, 0, 0, 0], [0, 0, 1, -1], [0, -1, 0, 0.2], [0, 0, 0, 1]],
+      "image_size_px": [1920, 1080],
+      "camera_axes": "x_right_y_down_z_forward",
+      "intrinsics": [1200, 1200, 960, 540],
+      "distortion_model": "none",
+      "distortion_coefficients": [],
+      "notes": "Synthetic pinhole-camera example; calibrate real cameras."
+    },
+    "camera_offset": {
+      "kind": "camera",
+      "world_from_sensor": [[1, 0, 0, 0.1], [0, 0, 1, -1], [0, -1, 0, 0.2], [0, 0, 0, 1]],
+      "image_size_px": [1920, 1080],
+      "camera_axes": "x_right_y_down_z_forward",
+      "intrinsics": [1200, 1200, 960, 540],
+      "distortion_model": "none",
+      "distortion_coefficients": [],
+      "notes": "Synthetic second camera with the same orientation and a 0.1 m +X offset."
+    }
+  }
+}

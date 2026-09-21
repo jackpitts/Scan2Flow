@@ -1,0 +1,42 @@
+# Proposed backend contract. These coordinates describe an illustrative straight
+# duct along +X. Replace them with measurements and region choices for your object.
+schema_version = "0.1.0"
+flow = "internal"
+coordinate_unit = "m"
+
+[domain]
+construction = "enclosed_void_from_seed"
+fluid_seed_m = [0.05, 0.0, 0.0]
+require_observed_internal_surfaces = true
+allow_inferred_internal_surfaces = false
+cap_declared_openings = true
+
+[[openings]]
+name = "inlet"
+center_m = [0.0, 0.0, 0.0]
+normal_out_of_fluid = [-1.0, 0.0, 0.0]
+radius_m = 0.01
+selection_tolerance_m = 0.0001
+
+[[openings]]
+name = "outlet"
+center_m = [0.1, 0.0, 0.0]
+normal_out_of_fluid = [1.0, 0.0, 0.0]
+radius_m = 0.01
+selection_tolerance_m = 0.0001
+
+[patches]
+wall = "remaining_fluid_boundary"
+
+[validation]
+require_positive_fluid_volume = true
+require_single_connected_fluid_region = true
+require_closed_fluid_boundary = true
+require_complete_disjoint_patch_assignment = true
+reject_ambiguous_opening_selection = true
+require_human_patch_review = true
+
+[export]
+geometry = "step"
+surface_mesh = "stl"
+patch_manifest = "boundary_patches.json"

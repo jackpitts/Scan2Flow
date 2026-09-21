@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1.0",
+  "translation_unit": "m",
+  "world_frame": "right_handed_z_up",
+  "scale_status": "assumed",
+  "scale_source": "Illustrative values only; obtain calibrated sensor scale for real measurements.",
+  "sensors": {
+    "scanner": {
+      "kind": "lidar",
+      "world_from_sensor": [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
+      "notes": "Raw coordinates use the dataset record's millimetres; convert to metres before this identity transform."
+    }
+  }
+}

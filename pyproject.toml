@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scan2flow"
+version = "0.1.0.dev0"
+description = "CLI and architecture scaffold for scan-to-CAD reconstruction and CFD preparation."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Scan2Flow contributors"}]
+keywords = ["cad", "cfd", "machine-learning", "reconstruction", "cli"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["build>=1.2,<2", "pytest>=8,<10", "ruff>=0.11,<1"]
+
+[project.scripts]
+scan2flow = "scan2flow.cli:main"
+
+[project.urls]
+Repository = "https://github.com/jackpitts/Scan2Flow"
+Documentation = "https://github.com/jackpitts/Scan2Flow/blob/main/DOCUMENTATION.md"
+Issues = "https://github.com/jackpitts/Scan2Flow/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

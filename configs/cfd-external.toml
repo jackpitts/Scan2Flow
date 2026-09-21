@@ -1,0 +1,36 @@
+# Proposed backend contract, not an implemented mesh/solver configuration.
+schema_version = "0.1.0"
+flow = "external"
+coordinate_unit = "m"
+
+[domain]
+construction = "box_minus_object"
+# Flow-aligned axes: +X downstream, +Z up; coordinates follow input normalization.
+flow_direction = [1.0, 0.0, 0.0]
+up_direction = [0.0, 0.0, 1.0]
+reference_length = "longest_object_obb_side"
+# Distances measured outward from the object's extrema in flow-aligned coordinates.
+# Illustrative starting values only: establish domain independence per application.
+upstream_lengths = 5.0
+downstream_lengths = 15.0
+lateral_lengths = 5.0
+top_lengths = 5.0
+bottom_lengths = 5.0
+
+[patches]
+inlet = "box_upstream_face"
+outlet = "box_downstream_face"
+farfield = "box_remaining_faces"
+object_wall = "object_boundary"
+
+[validation]
+require_positive_fluid_volume = true
+require_closed_fluid_boundary = true
+require_complete_disjoint_patch_assignment = true
+require_object_inside_domain = true
+require_human_patch_review = true
+
+[export]
+geometry = "step"
+surface_mesh = "stl"
+patch_manifest = "boundary_patches.json"
