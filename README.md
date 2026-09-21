@@ -2,57 +2,47 @@
 
 [![CI](https://github.com/jackpitts/Scan2Flow/actions/workflows/ci.yml/badge.svg)](https://github.com/jackpitts/Scan2Flow/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](pyproject.toml)
-[![Status](https://img.shields.io/badge/status-design%20%26%20CLI%20scaffold-orange)](#project-status)
+[![Status](https://img.shields.io/badge/status-CLI%20scaffold-orange)](#project-status)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-**From physical objects to CAD geometry prepared for Computational Fluid Dynamics.**
+**Turn captures of physical objects into CAD geometry for CFD preparation.**
 
-Scan2Flow is a command line project for reconstructing physical objects from photographs, short videos, or LiDAR point clouds. Its intended pipeline combines geometric reconstruction with machine learning to identify CAD features, fit valid solid geometry, and prepare that geometry for CFD meshing.
-
-The interface is strictly a CLI. Training, evaluation, reconstruction, and CFD preparation are designed as local, scriptable jobs. No graphical application or hosted inference service is included.
+Scan2Flow is a command line tool being developed to reconstruct objects from
+photographs, short videos or LiDAR scans, generate CAD, and prepare fluid-domain
+geometry. The intended workflow uses a pretrained model supplied by the project.
+Users do not need to create a dataset or train a model.
 
 ## Project status
 
-This repository is a **documented architecture and executable CLI scaffold**, version `0.1.0.dev0`. It does not yet reconstruct objects, train models, export CAD, or prepare fluid domains. There are no pretrained weights, datasets, measured accuracy results, or production releases.
+This is an **executable CLI scaffold**, version `0.1.0.dev0`.
 
-| Capability | Available now | Intended backend behavior |
-|---|---|---|
-| Installable `scan2flow` command | Yes | Stable entry point for all jobs |
-| Help, version, argument validation | Yes | Validate commands before execution |
-| JSON dry-run plans | Yes | Inspect CLI options without changing files |
-| Dependency inventory | Yes, through `doctor` | Help diagnose the local environment |
-| Photos, videos, and LiDAR reconstruction | CLI contract only | Reconstruct and fit object geometry |
-| Model training and evaluation | CLI contract only | Reproducible supervised training and geometry evaluation |
-| STEP/STL output and CFD preparation | CLI contract only | Validated geometry, fluid domains, and quality reports |
+| Capability | Current status |
+| --- | --- |
+| Installation, help and version | Working |
+| Argument checks and JSON dry-run plans | Working |
+| Environment inventory with `doctor` | Working |
+| Input decoding, model inference and CAD export | Not implemented |
+| CFD-domain preparation | Not implemented |
+| Pretrained model | Not yet supplied |
 
-Commands with `--dry-run` validate CLI syntax and option relationships, then print a plan. They do **not** read inputs or configuration contents, check checkpoint compatibility, or validate geometry. Execution without `--dry-run` exits with code `3` and explains that the backend is unimplemented. Installing optional libraries does not change that behavior.
+A dry-run validates command syntax and option relationships only. It does not read
+files, load a model, inspect geometry or produce CAD. Without `--dry-run`, processing
+commands exit with code `3` because their backends are not implemented.
 
-## Key features and design goals
+## Intended features
 
-- **One object, several capture methods:** one or more photos, one or more video clips, or an exported LiDAR scan.
-- **Learned CAD feature recognition:** proposed image and point-cloud encoders predict surfaces and analytic features such as planes, cylinders, holes, and fillets.
-- **Hybrid reconstruction:** camera estimation and scan registration supply geometric evidence; a CAD kernel fits and checks boundary representations (B-reps).
-- **CFD-oriented outputs:** planned STEP solids, STL surface meshes, dimensional provenance, geometry-quality reports, and a separate fluid-domain preparation stage.
-- **Reproducible ML workflows:** object-family data splits, versioned manifests, shared preprocessing, baseline comparisons, and traceable model bundles.
-- **Explicit uncertainty:** unsupported surfaces and inferred hidden geometry must be reported. A single photograph cannot establish an object's complete shape or absolute dimensions.
+- Reconstruct one rigid object from one or several photos, video clips or LiDAR scans.
+- Export checked STEP geometry and/or an STL surface mesh.
+- Record physical scale, uncertainty and geometry-quality evidence.
+- Prepare external or internal fluid regions with explicit boundary definitions.
 
-These are implementation goals, except for the CLI functionality identified above. A visually plausible mesh is not automatically accurate CAD, and valid object CAD is not a complete CFD simulation.
-
-## Prerequisites
-
-For the scaffold:
-
-- Python **3.11 or newer**, `pip`, and Git.
-- A terminal on Windows, Linux, or macOS. GPU hardware is unnecessary for help, dry runs, and the current tests.
-- A virtual environment is recommended. The core package has no third-party runtime dependencies.
-
-For future backend development, the proposed stack is PyTorch for learning, COLMAP for camera reconstruction, FFmpeg for video decoding, Open3D for point clouds, and CadQuery/Open CASCADE for CAD operations. OpenFOAM or Gmsh belongs to the downstream CFD/meshing environment. Their platform, GPU, and binary requirements are separate from the scaffold; see [backend setup](DOCUMENTATION.md#backend-development-environment).
-
-No validated training hardware minimum or backend dependency lock exists yet. These must be established through the first reproducible baseline.
+A single photo cannot establish all hidden geometry. A CAD file also needs dimensional
+review, fluid-domain definition, meshing and solver setup before meaningful CFD analysis.
 
 ## Installation
 
-Install from this repository; no PyPI release is assumed.
+The scaffold requires Python **3.11+** and Git. No GPU or third-party runtime
+packages are needed for its current commands. Install from this repository:
 
 ```bash
 git clone https://github.com/jackpitts/Scan2Flow.git
@@ -61,173 +51,156 @@ cd Scan2Flow
 
 ### Windows PowerShell
 
-Use the virtual environment's Python directly; activation is optional.
+Use the environment's Python directly; activation is optional:
 
 ```powershell
 py -3 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+.\.venv\Scripts\python.exe -m pip install -e .
 .\.venv\Scripts\python.exe -m scan2flow --help
-.\.venv\Scripts\python.exe -m scan2flow doctor --json
 ```
 
-To use the shorter `scan2flow` commands below, activate the environment if your local PowerShell policy allows it:
+For the short `scan2flow` command, activate the environment:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
+scan2flow --help
 ```
 
-Otherwise replace `scan2flow` with `.\.venv\Scripts\python.exe -m scan2flow`.
+If activation is blocked, replace `scan2flow` in the examples below with
+`.\.venv\Scripts\python.exe -m scan2flow`. No global execution-policy change is needed.
+
+### Windows Git Bash
+
+Use forward slashes and the Bash activation script:
+
+```bash
+python -m venv .venv
+source .venv/Scripts/activate
+python -m pip install -e .
+scan2flow --help
+```
+
+Without activation, use `./.venv/Scripts/python.exe -m scan2flow --help`.
 
 ### Linux or macOS
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
+python -m pip install -e .
 scan2flow --help
-scan2flow doctor --json
 ```
 
-Use `python -m pip install -e .` if you do not need development tools. `python -m scan2flow` is equivalent to the installed command.
+## Commands
 
-### Development checks
+The public CLI has three commands:
 
-Run these inside the environment, from the repository root:
+| Command | Purpose |
+| --- | --- |
+| `reconstruct` | Plan reconstruction and CAD export from your captures |
+| `prepare-cfd` | Plan fluid-domain preparation from object geometry |
+| `doctor` | Inspect the local environment |
+
+Training and model evaluation are developer responsibilities outside the public CLI.
+The initial `train` and `evaluate` commands have been removed.
+
+All processing examples below are **dry-run plans**. Their input files do not need
+to exist. Removing `--dry-run` currently reports the unavailable backend.
+
+### Single photo
 
 ```bash
-python -m pytest
-python -m ruff check .
-python -m ruff format --check .
-python -m build
+scan2flow reconstruct --input front.jpg --input-type photo --known-length 0.25 --units m --output artifacts/reconstruction/photo --dry-run
 ```
 
-The CI workflow checks the scaffold. Passing CI does not establish reconstruction accuracy or CFD suitability.
+`--known-length` is the measured longest side of the object's oriented bounding box,
+expressed in `--units`. It anchors scale approximately; unseen shape still needs review.
 
-### ECC architecture and setup workflow
-
-This foundation was developed using the installed **[affaan-m/ECC](https://github.com/affaan-m/ECC) plugin, version 2.2.2**. Its machine-learning workflow informed the data contracts, reproducibility requirements, evaluation gates, and artifact lifecycle; its Python guidance informed package boundaries and the CLI scaffold. Architecture trade-offs are recorded in the project documentation.
-
-See [ECC_WORKFLOW.md](docs/ECC_WORKFLOW.md) for the applied skills, their architectural consequences, and verified contributor setup instructions. ECC is a development aid and is not required to run Scan2Flow.
-
-## CLI usage
-
-All examples below are **runnable planning examples**. Paths name your future local inputs and model bundle; those assets are not supplied. Each command includes `--dry-run`, so it prints a plan without reading assets or producing output files. Removing that flag currently exits with code `3`.
-
-Repeat `--input` for each file. Every file in one reconstruction must depict the **same rigid object in an unchanged configuration**. Inputs are not separate batch jobs. Quote paths containing spaces and expand file lists yourself; the CLI does not expand globs or scan directories.
-
-### Single photograph
+### Multiple photos of the same object
 
 ```bash
-scan2flow reconstruct --input data/raw/images/front.jpg --input-type photo --known-length 0.25 --units m --checkpoint models/checkpoints/baseline --output artifacts/reconstruction/single-photo --dry-run
+scan2flow reconstruct --input front.jpg --input side.jpg --input rear.jpg --input-type photo --known-length 250 --units mm --output artifacts/reconstruction/photos --dry-run
 ```
 
-`--known-length` is the measured longest side of the object's oriented bounding box, expressed in `--units`. It supplies an approximate scale anchor; it does not recover unseen shape. Single-photo reconstruction is an exploratory mode requiring learned priors and dimensional review.
+Repeat `--input` for each file. All captures must show the same rigid object in an
+unchanged configuration. Three filenames illustrate syntax, not sufficient coverage;
+use overlapping views around important surfaces and openings. Directory/glob expansion
+is not provided by the CLI.
 
-### Multiple photographs of the same object
+### One video or several clips
 
 ```bash
-scan2flow reconstruct --input data/raw/images/front.jpg --input data/raw/images/side.jpg --input data/raw/images/rear.jpg --input-type photo --known-length 250 --units mm --checkpoint models/checkpoints/baseline --output artifacts/reconstruction/multiview --format both --dry-run
+scan2flow reconstruct --input orbit.mp4 --input-type video --known-length 0.25 --frame-step 15 --max-frames 200 --output artifacts/reconstruction/video --dry-run
+scan2flow reconstruct --input upper.mp4 --input lower.mp4 --input-type video --known-length 0.25 --output artifacts/reconstruction/videos --dry-run
 ```
 
-Three files demonstrate the syntax, not sufficient coverage. Collect overlapping views around the object at several elevations, with stable focus, exposure, and lighting. Include the underside and important openings where possible. See [capture requirements](DOCUMENTATION.md#capture-and-input-contract).
+The planned sampler selects every Nth frame in each clip. The maximum retained frame
+count applies across all clips; useful overlap and viewpoint changes are still required.
 
-### One short video
+### LiDAR scan
 
 ```bash
-scan2flow reconstruct --input data/raw/videos/orbit.mp4 --input-type video --frame-step 15 --max-frames 200 --known-length 0.25 --checkpoint models/checkpoints/baseline --output artifacts/reconstruction/video --dry-run
+scan2flow reconstruct --input object.ply --input-type lidar --scan-units mm --units m --output artifacts/reconstruction/lidar --dry-run
 ```
 
-The planned decoder samples every 15th decoded frame and retains at most 200 frames in total. Sampling is followed by blur, overlap, and pose-quality checks; recording more near-identical frames does not add useful geometry.
+`--scan-units` declares source point units; `--units` declares output units. Both
+`--voxel-size` and `--tolerance` always use metres. LiDAR does not accept `--known-length`.
 
-### Multiple videos of the same object
+### Prepare a fluid domain
 
 ```bash
-scan2flow reconstruct --input data/raw/videos/upper-orbit.mp4 --input data/raw/videos/lower-orbit.mp4 --input-type video --frame-step 30 --max-frames 300 --known-length 0.25 --checkpoint models/checkpoints/baseline --output artifacts/reconstruction/multi-video --dry-run
+scan2flow prepare-cfd --input artifacts/reconstruction/lidar/object.step --output artifacts/cfd/external --flow external --units m --domain configs/cfd-external.toml --dry-run
 ```
 
-Clips need overlapping visible surfaces for registration. The proposed frame limit applies across clips, and calibration must account for each recording's camera settings.
-
-### LiDAR point cloud
-
-```bash
-scan2flow reconstruct --input data/raw/lidar/object.ply --input-type lidar --scan-units mm --units m --voxel-size 0.002 --tolerance 0.0001 --checkpoint models/checkpoints/baseline --output artifacts/reconstruction/lidar --dry-run
-```
-
-Here scan coordinates are in millimetres and output coordinates are in metres. `--voxel-size` and `--tolerance` are **always in metres**. `--scan-units` is mandatory for LiDAR; `--known-length` is not accepted for LiDAR. A point cloud must be segmented to the target object, or the future preprocessing stage must perform that segmentation.
-
-### Initiate model training
-
-```bash
-scan2flow train --config configs/train.toml --output artifacts/training/baseline --device cuda --seed 42 --dry-run
-```
-
-This is the training entry-point contract; training itself is unimplemented. The [example configuration](configs/train.toml) describes the intended dataset, model, optimizer, and evaluation settings. Prepare licensed paired CAD/capture data and object-family splits before implementing or running a backend. See the [ML pipeline guide](docs/ML_PIPELINE.md).
-
-The planned resume interface is:
-
-```bash
-scan2flow train --config configs/train.toml --output artifacts/training/resumed --resume models/checkpoints/last --device cuda --dry-run
-```
-
-### Evaluate a model
-
-```bash
-scan2flow evaluate --config configs/evaluate.toml --checkpoint models/checkpoints/baseline --split test --output artifacts/evaluation/baseline --device cpu --dry-run
-```
-
-### Prepare an external-flow domain
-
-```bash
-scan2flow prepare-cfd --input artifacts/reconstruction/lidar/object.step --output artifacts/cfd/external --flow external --units m --domain configs/cfd-external.toml --tolerance 0.0001 --dry-run
-```
-
-For internal flow, use `--flow internal` and [configs/cfd-internal.toml](configs/cfd-internal.toml). Domain examples require case-specific review. Preparation will describe geometry and boundary regions; fluid properties, boundary conditions, volume meshing, turbulence models, and solving remain downstream work.
+For internal flow, use `--flow internal` and `configs/cfd-internal.toml`. Adapt the
+domain template to your object. This stage is intended to prepare geometry; it does
+not select fluid properties, boundary conditions, mesh settings or run a solver.
 
 ### Help and diagnostics
 
 ```bash
 scan2flow --version
 scan2flow reconstruct --help
-scan2flow train --help
+scan2flow prepare-cfd --help
 scan2flow doctor --json
 ```
 
-The [complete CLI reference](DOCUMENTATION.md#cli-reference) defines every argument, default, unit, validation rule, and exit code.
+`doctor` inventories optional packages and executables without importing native
+libraries or testing GPU/backend compatibility. Missing optional entries are expected.
 
-## Output contract
+The [CLI reference](docs/CLI_REFERENCE.md) covers every option, default and exit code.
+`--model PATH` is an optional pretrained-model override. No checkpoint argument is
+required; no release model is supplied or automatically downloaded today.
 
-A future successful reconstruction is designed to produce selected geometry files and a provenance/quality report:
+## Planned output
 
 ```text
 artifacts/reconstruction/example/
-├── object.step          # CAD B-rep, when STEP fitting and validation succeed
-├── object.stl           # Tessellated surface; unit convention recorded separately
-├── quality.json         # Geometry checks, uncertainty, and acceptance status
-└── provenance.json      # Inputs, hashes, units, transforms, config, model and code versions
+├── object.step          # CAD geometry when fitting and validation succeed
+├── object.stl           # Triangulated surface, if requested
+├── quality.json         # Geometry checks, limitations and review decision
+└── provenance.json      # Source, units, model and processing versions
 ```
 
-`--format` controls geometry export. STL carries triangles and no standardized physical-unit metadata; STEP does not guarantee an editable feature history. Outputs must pass geometry checks and independent dimensional review before being used to create a CFD mesh. The scaffold creates none of these files.
+`--format step`, `stl` or `both` selects planned geometry exports. STL requires an
+explicit unit convention; STEP does not guarantee editable feature history. These
+files are not generated by the current scaffold.
 
-## Documentation and layout
+## Documentation
 
-- [DOCUMENTATION.md](DOCUMENTATION.md): architecture, setup, input/output contracts, full CLI reference, and troubleshooting.
-- [ML_PIPELINE.md](docs/ML_PIPELINE.md): data, model design, training, evaluation, deployment, and rollback.
-- [CFD_GUIDE.md](docs/CFD_GUIDE.md): geometry validation, fluid domains, meshing, and simulation verification.
-- [PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md): complete tracked directory and file skeleton.
-- [ECC_WORKFLOW.md](docs/ECC_WORKFLOW.md): plugin use and contributor setup.
-- [CONTRIBUTING.md](CONTRIBUTING.md): development and review expectations.
-- [Examples](examples/README.md), [configuration templates](configs/README.md), and [schemas](schemas/README.md): proposed backend contracts.
+- [CLI reference](docs/CLI_REFERENCE.md): public commands and troubleshooting.
+- [CFD guide](docs/CFD_GUIDE.md): using and checking geometry for fluid simulation.
+- [Examples](examples/commands.md): additional planning commands.
 
-Source code lives in `src/scan2flow/`, tests in `tests/`, datasets in `data/`, model artifacts in `models/`, and generated job outputs in `artifacts/`. Large/private datasets and model binaries are excluded from Git.
+For contributors, [DOCUMENTATION.md](DOCUMENTATION.md) is the shared development
+plan: scope, current state, decisions and next steps. Detailed engineering material
+lives under `development/`; it is not part of the end-user setup.
 
-## Contributing
+## Contributing and license
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md), create a focused branch, and include checks that demonstrate the behavior you change. Backend work should begin with a reproducible classical baseline and an agreed data contract, then add learned features and CAD fitting against measurable geometry criteria.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, checks and review.
+The architecture was developed with [affaan-m/ECC](https://github.com/affaan-m/ECC);
+its use is recorded in [the developer workflow](development/ECC_WORKFLOW.md).
 
-Do not describe a backend as supported until it runs on a documented environment with representative regression cases. Report reproducible issues through [GitHub Issues](https://github.com/jackpitts/Scan2Flow/issues).
-
-## License
-
-Scan2Flow's original code and documentation are licensed under the **MIT License**; see [LICENSE](LICENSE). Third-party libraries, datasets, pretrained weights, and generated geometry derived from supplied assets retain their own applicable terms. No third-party dataset or model is redistributed here.
+Original code and documentation use the [MIT License](LICENSE). Third-party libraries,
+models and datasets retain their own terms; none are redistributed here.

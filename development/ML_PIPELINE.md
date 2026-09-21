@@ -1,6 +1,6 @@
 # Scan2Flow machine learning pipeline
 
-> **Implementation status:** this is the engineering specification for a planned reconstruction backend. The repository supplies a CLI scaffold, not trained weights, a training loop, a CAD reconstruction engine, or demonstrated reconstruction accuracy. The commands accept and validate arguments; `--dry-run` prints a plan without opening inputs or configurations. Execution without `--dry-run` reports an unavailable backend with exit code `3`.
+> **Implementation status:** this is the engineering specification for a planned reconstruction backend. The repository supplies a CLI scaffold, not trained weights, a training loop, a CAD reconstruction engine, or demonstrated reconstruction accuracy. Only the end-user commands accept and validate arguments; `--dry-run` prints a plan without opening inputs or configurations. End-user execution without `--dry-run` reports an unavailable backend with exit code `3`. Training and evaluation have no executable entry point yet and are not public CLI commands.
 
 This design applies the [affaan-m/ECC machine learning workflow](https://github.com/affaan-m/everything-claude-code/blob/main/skills/mle-workflow/SKILL.md): define the prediction and data contracts, compare reproducible baselines, evaluate important slices, package complete artifacts, and retain a tested rollback path. ECC guides development; it is not an inference dependency or a pretrained Scan2Flow model.
 
@@ -12,7 +12,7 @@ The target is a dimensionally interpretable representation of one rigid physical
 | --- | --- |
 | Input unit | One object captured in one or more photographs, one or more short videos, or a LiDAR scan; repeated inputs belong to the same rigid object. |
 | Output target | Validated boundary representation (B-rep) for STEP export, triangulated surface for STL export, and a machine-readable provenance and quality report. |
-| Scope | Local CLI training, evaluation, reconstruction, and CFD preparation. No hosted service, web interface, or telemetry dependency. |
+| Scope | Local developer training/evaluation; a separate end-user CLI for reconstruction and CFD preparation. No hosted service, web interface, or telemetry dependency. |
 | Scale | Canonical physical coordinates are metres. Preserve source-to-canonical and model-normalization transforms. |
 | Confidence | Region-level observation coverage and calibrated task-specific confidence; no unsupported global “accuracy” percentage. |
 | Failure policy | Reject invalid inputs, incompatible artifacts, insufficient evidence, or failed geometry checks. Keep diagnostics separate from accepted geometry. |
@@ -135,14 +135,11 @@ Normalize each loss by its valid sample count so absent labels do not change bat
 
 ## 6. Reproducible execution and artifact contract
 
-The CLI accepts a TOML configuration path; the current scaffold does not load it. Once implemented, configuration validation must reject unknown keys and incompatible preprocessing/model versions before expensive work. The full argument reference is in [DOCUMENTATION.md](../DOCUMENTATION.md).
+Training and model evaluation belong to developer tooling under `development/training/` and `development/evaluation/`, outside the installed user package. Neither has an executable implementation yet. The public CLI cannot start either operation.
 
-```bash
-scan2flow train --config configs/train.toml --output artifacts/training/baseline --device cpu --seed 42 --dry-run
-scan2flow evaluate --config configs/evaluate.toml --checkpoint models/checkpoints/candidate --split validation --output artifacts/evaluation/candidate --dry-run
-```
+The proposed [training settings](configs/train.toml) and [evaluation settings](configs/evaluate.toml) define internal experiments. They are not consumed by today's code. A future developer runner must validate configuration and record output location, device, seed, dataset split and complete resume state. Do not document a runnable command until that runner exists.
 
-These examples validate command syntax only. Checkpoint and dataset paths are illustrative; they are not supplied weights or data. `--resume` is planned to restore a compatible complete training state, not just network weights.
+The broad hybrid settings describe a later research stage. The current [development plan](../DOCUMENTATION.md#next-experiment) starts with a smaller point-cloud/primitive baseline; create a dedicated experiment configuration when that experiment is implemented.
 
 The proposed [model-bundle schema](../schemas/model-bundle.schema.json) records the immutable bundle's core provenance and artifact references. Every completed future training run must record:
 
@@ -153,7 +150,7 @@ The proposed [model-bundle schema](../schemas/model-bundle.schema.json) records 
 - Baseline and candidate metrics, per-slice sample counts, confidence intervals, failure examples, calibration result, and promotion decision.
 - Resource usage, elapsed time, peak memory, artifact digests, training-data provenance, model card, and supported/unsupported inputs.
 
-Write artifacts into a new run directory and publish them atomically after verification. Never overwrite the only working checkpoint. Prefer a non-executable weights format where supported; load only trusted compatible artifacts and avoid unsafe deserialization. `--device auto` must eventually report the selected device and backend; it must not conceal an incompatible model or silently change validation semantics.
+Write artifacts into a new run directory and publish them atomically after verification. Never overwrite the only working checkpoint. Prefer a non-executable weights format where supported; load only trusted compatible artifacts and avoid unsafe deserialization. The developer runner must report the selected device and backend; it must not conceal an incompatible model or silently change validation semantics.
 
 ## 7. Evaluation and acceptance gates
 
@@ -180,7 +177,7 @@ CFD validation is a controlled downstream experiment: hold solver, physics, doma
 
 Promotion requires reproducible comparisons with the baseline and previous accepted artifact, passing declared geometry/feature gates on all required slices, calibrated rejection behavior, CLI compatibility, and resource checks. Missing evaluation evidence fails promotion. A model card documents known limitations and the owner who accepted them.
 
-Deployment means selecting an immutable local artifact with `--checkpoint`. First replay a representative offline corpus against candidate and previous artifacts; compare geometry, failures, resource use, and downstream effects. No online canary infrastructure is required for this CLI project.
+Deployment means publishing an approved pretrained inference bundle with the release; an advanced user may select another compatible inference bundle with `--model`. Training checkpoints and resume state are not user inputs. First replay a representative offline corpus against candidate and previous artifacts; compare geometry, failures, resource use, and downstream effects. No online canary infrastructure is required for this CLI project.
 
 Keep the previous checkpoint, preprocessing bundle, schema, fitting settings, and dependency environment together. Roll back by selecting that compatible bundle and rerunning affected jobs into new output directories. Preserve failed outputs and reports for diagnosis; do not replace input measurements or trusted prior results.
 

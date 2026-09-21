@@ -33,7 +33,7 @@ scan2flow = "scan2flow.cli:main"
 
 [project.urls]
 Repository = "https://github.com/jackpitts/Scan2Flow"
-Documentation = "https://github.com/jackpitts/Scan2Flow/blob/main/DOCUMENTATION.md"
+Documentation = "https://github.com/jackpitts/Scan2Flow/blob/main/docs/CLI_REFERENCE.md"
 Issues = "https://github.com/jackpitts/Scan2Flow/issues"
 
 [tool.setuptools.packages.find]

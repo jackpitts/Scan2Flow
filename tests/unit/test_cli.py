@@ -17,8 +17,6 @@ def reconstruction(modality: str = "photo") -> list[str]:
         modality,
         "--output",
         "missing-output",
-        "--checkpoint",
-        "missing-checkpoint",
     ]
     if modality == "lidar":
         arguments += ["--scan-units", "mm"]
@@ -37,7 +35,7 @@ def test_reconstruction_plan_defaults(modality, capsys):
     options = result["options"]
     assert options["units"] == "m"
     assert options["device"] == "auto"
-    assert options["seed"] == 42
+    assert options["model"] is None
     assert options["format"] == "both"
     assert options["voxel_size"] == 0.002
     assert options["tolerance"] == 0.0001
@@ -62,17 +60,8 @@ def test_invalid_video_counts_rejected(flag, value):
     assert error.value.code == 2
 
 
-@pytest.mark.parametrize("value", ["-1", "1.5", "nan", "inf"])
-def test_invalid_seed_rejected(value):
-    with pytest.raises(SystemExit) as error:
-        cli.main(reconstruction() + [f"--seed={value}", "--dry-run"])
-    assert error.value.code == 2
-
-
-def test_zero_seed_and_explicit_video_settings_accepted(capsys):
+def test_explicit_video_settings_accepted(capsys):
     arguments = reconstruction("video") + [
-        "--seed",
-        "0",
         "--frame-step",
         "1",
         "--max-frames",
@@ -81,7 +70,37 @@ def test_zero_seed_and_explicit_video_settings_accepted(capsys):
     ]
     assert cli.main(arguments) == 0
     options = json.loads(capsys.readouterr().out)["options"]
-    assert (options["seed"], options["frame_step"], options["max_frames"]) == (0, 1, 7)
+    assert (options["frame_step"], options["max_frames"]) == (1, 7)
+
+
+def test_pretrained_model_override_is_optional_and_recorded(capsys):
+    assert cli.main(reconstruction() + ["--model", "release-model", "--dry-run"]) == 0
+    assert json.loads(capsys.readouterr().out)["options"]["model"] == "release-model"
+
+
+@pytest.mark.parametrize("command", ["train", "evaluate"])
+def test_developer_commands_are_not_public(command, capsys):
+    with pytest.raises(SystemExit) as error:
+        cli.main([command, "--help"])
+    assert error.value.code == 2
+    assert "invalid choice" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("flag", ["--checkpoint", "--seed", "--resume", "--config"])
+def test_training_and_legacy_options_are_rejected(flag):
+    with pytest.raises(SystemExit) as error:
+        cli.main(reconstruction() + [flag, "1", "--dry-run"])
+    assert error.value.code == 2
+
+
+def test_public_help_only_lists_user_commands(capsys):
+    with pytest.raises(SystemExit) as error:
+        cli.main(["--help"])
+    assert error.value.code == 0
+    help_text = capsys.readouterr().out
+    assert "{reconstruct,prepare-cfd,doctor}" in help_text
+    assert "train" not in help_text
+    assert "evaluate" not in help_text
 
 
 @pytest.mark.parametrize("modality", ["photo", "lidar"])
@@ -128,16 +147,14 @@ def test_unknown_abbreviated_or_misplaced_global_options_rejected(extra):
     assert error.value.code == 2
 
 
-@pytest.mark.parametrize("command", [[], ["train"], ["evaluate"], ["prepare-cfd"], ["reconstruct"]])
+@pytest.mark.parametrize("command", [[], ["prepare-cfd"], ["reconstruct"]])
 def test_required_arguments_enforced(command):
     with pytest.raises(SystemExit) as error:
         cli.main(command)
     assert error.value.code == 2
 
 
-@pytest.mark.parametrize(
-    "command", [[], ["reconstruct"], ["train"], ["evaluate"], ["prepare-cfd"], ["doctor"]]
-)
+@pytest.mark.parametrize("command", [[], ["reconstruct"], ["prepare-cfd"], ["doctor"]])
 def test_help_is_available(command, capsys):
     with pytest.raises(SystemExit) as error:
         cli.main(command + ["--help"])

@@ -1,4 +1,5 @@
-# Proposed backend contract; the current CLI never reads this file.
+# Proposed later-stage developer experiment; no trainer consumes this file yet.
+# See DOCUMENTATION.md for the smaller first prototype.
 schema_version = "0.1.0"
 experiment_name = "hybrid-reconstruction-baseline"
 
@@ -110,3 +111,9 @@ bundle_schema = "schemas/model-bundle.schema.json"
 save_preprocessing_contract = true
 save_model_card = true
 save_rejected_examples = true
+
+[execution]
+# Internal runner settings; these are not public CLI options.
+device = "auto"
+seed = 42
+output = "artifacts/training/baseline"

@@ -1,4 +1,4 @@
-# Proposed backend contract; use --checkpoint, --split, and --output on the CLI.
+# Proposed developer evaluation configuration; no runner consumes this file yet.
 schema_version = "0.1.0"
 
 [dataset]
@@ -16,7 +16,6 @@ reject_version_mismatch = true
 augmentation = false
 
 [evaluation]
-seed = 42
 surface_sample_count = 10000
 distance_unit = "m"
 fscore_distance_m = 0.001
@@ -38,3 +37,11 @@ require_threshold_policy = true
 require_baseline_comparison = true
 require_slice_review = true
 require_geometry_review = true
+
+[execution]
+# Internal runner settings; these are not public CLI options.
+device = "auto"
+seed = 42
+output = "artifacts/evaluation/baseline"
+model_bundle = "models/exports/candidate"
+split = "validation"
