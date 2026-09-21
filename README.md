@@ -101,9 +101,6 @@ The public CLI has three commands:
 | `prepare-cfd` | Plan fluid-domain preparation from object geometry |
 | `doctor` | Inspect the local environment |
 
-Training and model evaluation are developer responsibilities outside the public CLI.
-The initial `train` and `evaluate` commands have been removed.
-
 All processing examples below are **dry-run plans**. Their input files do not need
 to exist. Removing `--dry-run` currently reports the unavailable backend.
 
