@@ -1,10 +1,10 @@
-# Developer scripts
+# Maintenance scripts
 
-Future maintenance scripts belong here: dataset integrity checks, reproducible
-synthetic-data generation, benchmark orchestration, and artifact packaging.
-User operations belong in the `scan2flow` CLI, and reusable processing belongs in
-`src/scan2flow/`. No data downloader, trainer, or backend installer is supplied.
+Future shared maintenance scripts belong here: asset integrity checks and artifact
+packaging. Model training and evaluation are developer work under `development/`;
+there is no trainer or evaluator to run yet. End-user operations belong to the
+`scan2flow` CLI; reusable inference and geometry code belongs in `src/scan2flow/`.
 
-Scripts must document dependencies and inputs, use explicit output paths, and avoid
-hidden notebook state. Test geometry and metric logic in the package rather than
-duplicating it inside a script.
+Scripts must document dependencies, input/output paths and reproducibility.
+Personal scratch work belongs in ignored `.local-notes/`. Update the shared
+[development plan](../DOCUMENTATION.md) when an experiment changes a decision.

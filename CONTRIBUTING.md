@@ -2,9 +2,11 @@
 
 Scan2Flow is at the architecture and CLI-scaffold stage. Contributions should turn a documented contract into measurable behavior while keeping the CLI and documentation consistent.
 
+Read [DOCUMENTATION.md](DOCUMENTATION.md) before starting: it defines the current scope and next experiment. Training and model evaluation belong under `development/`, outside the installed public package.
+
 ## Local setup
 
-Follow the platform-specific virtual-environment instructions in [README.md](README.md#installation). Install the development tools with `python -m pip install -e ".[dev]"`. See [ECC_WORKFLOW.md](docs/ECC_WORKFLOW.md) for the optional ECC contributor workflow used to develop this foundation.
+Follow the platform-specific virtual-environment instructions in [README.md](README.md#installation). Install the development tools with `python -m pip install -e ".[dev]"`. See [ECC_WORKFLOW.md](development/ECC_WORKFLOW.md) for the optional ECC contributor workflow used to develop this foundation.
 
 Create a branch from the current default branch:
 
@@ -33,7 +35,7 @@ Use tiny synthetic fixtures that you have permission to redistribute. Do not com
 
 For ML changes, include the dataset snapshot, grouping/split policy, preprocessing version, random seed, configuration, code revision, baseline comparison, and relevant error slices. Record failed CAD fits and abstentions in the denominator. Report measured geometry and topology metrics; render quality alone is insufficient.
 
-The [ML pipeline guide](docs/ML_PIPELINE.md) describes evaluation and promotion requirements. The [CFD guide](docs/CFD_GUIDE.md) describes downstream geometry and simulation checks.
+The [ML pipeline guide](development/ML_PIPELINE.md) describes evaluation and promotion requirements. The [CFD guide](docs/CFD_GUIDE.md) describes downstream geometry and simulation checks.
 
 ## Validation
 
@@ -52,7 +54,7 @@ Large GPU training, native CAD integration, and solver tests are future opt-in s
 
 ## Documentation and pull requests
 
-Update command help, the [CLI reference](DOCUMENTATION.md#cli-reference), examples, and status claims together. Do not add a success badge or benchmark without reproducible evidence.
+Update command help, the [CLI reference](docs/CLI_REFERENCE.md#cli-reference), examples, and status claims together. Do not add a success badge or benchmark without reproducible evidence.
 
 A pull request should state the problem, the new behavior, validation performed, and any remaining limitations. For design changes, describe the chosen approach, alternatives, and consequences. Avoid claiming that a passing geometry check establishes validated CFD predictions.
 

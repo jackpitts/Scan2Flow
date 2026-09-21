@@ -41,3 +41,6 @@ artifacts/**
 mlruns/
 wandb/
 *.log
+
+# Personal scratch notes; shared development decisions remain versioned.
+.local-notes/

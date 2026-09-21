@@ -56,11 +56,6 @@ def add_device(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--device", choices=DEVICES, default="auto", help="compute device")
 
 
-def add_seed(parser: argparse.ArgumentParser) -> None:
-    """Add the shared deterministic-seed request."""
-    parser.add_argument("--seed", type=nonnegative_int, default=42, help="nonnegative random seed")
-
-
 def add_dry_run(parser: argparse.ArgumentParser) -> None:
     """Add a side-effect-free JSON planning option."""
     parser.add_argument(
@@ -94,7 +89,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     reconstruct.add_argument("--input-type", choices=("photo", "video", "lidar"), required=True)
     reconstruct.add_argument("--output", required=True, metavar="PATH", help="output directory")
-    reconstruct.add_argument("--checkpoint", required=True, metavar="PATH", help="model checkpoint")
+    reconstruct.add_argument(
+        "--model",
+        metavar="PATH",
+        help="optional pretrained bundle; otherwise use the release model (not yet shipped)",
+    )
     reconstruct.add_argument("--calibration", metavar="PATH", help="camera/sensor calibration file")
     reconstruct.add_argument(
         "--units", choices=UNITS, default="m", help="output CAD and --known-length units"
@@ -136,40 +135,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     reconstruct.add_argument("--format", choices=("step", "stl", "both"), default="both")
     add_device(reconstruct)
-    add_seed(reconstruct)
     add_dry_run(reconstruct)
-
-    train = commands.add_parser(
-        "train",
-        help="plan ML model training",
-        allow_abbrev=False,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-    train.add_argument(
-        "--config", required=True, metavar="PATH", help="training TOML configuration"
-    )
-    train.add_argument("--output", required=True, metavar="PATH", help="training run directory")
-    train.add_argument("--resume", metavar="PATH", help="checkpoint from which to resume")
-    add_device(train)
-    add_seed(train)
-    add_dry_run(train)
-
-    evaluate = commands.add_parser(
-        "evaluate",
-        help="plan evaluation of a checkpoint",
-        allow_abbrev=False,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-    evaluate.add_argument(
-        "--config", required=True, metavar="PATH", help="evaluation TOML configuration"
-    )
-    evaluate.add_argument("--checkpoint", required=True, metavar="PATH", help="model checkpoint")
-    evaluate.add_argument("--split", choices=("validation", "test"), default="test")
-    evaluate.add_argument(
-        "--output", required=True, metavar="PATH", help="evaluation report directory"
-    )
-    add_device(evaluate)
-    add_dry_run(evaluate)
 
     cfd = commands.add_parser(
         "prepare-cfd",

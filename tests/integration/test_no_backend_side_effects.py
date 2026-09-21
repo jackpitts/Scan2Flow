@@ -7,7 +7,7 @@ import pytest
 from scan2flow.cli import main
 
 
-@pytest.mark.parametrize("command", ["photo", "video", "lidar", "train", "evaluate", "prepare-cfd"])
+@pytest.mark.parametrize("command", ["photo", "video", "lidar", "prepare-cfd"])
 @pytest.mark.parametrize("dry_run", [True, False])
 def test_workflows_do_not_read_or_modify_assets(command, dry_run, tmp_path, capsys):
     asset = tmp_path / "input with spaces.bin"
@@ -21,7 +21,7 @@ def test_workflows_do_not_read_or_modify_assets(command, dry_run, tmp_path, caps
             str(asset),
             "--input-type",
             command,
-            "--checkpoint",
+            "--model",
             str(asset),
             "--output",
             str(output),
@@ -30,26 +30,6 @@ def test_workflows_do_not_read_or_modify_assets(command, dry_run, tmp_path, caps
             arguments += ["--scan-units", "mm"]
         else:
             arguments += ["--input", str(tmp_path / "nonexistent-view"), "--known-length", "25"]
-    elif command == "train":
-        arguments = [
-            "train",
-            "--config",
-            str(asset),
-            "--resume",
-            str(asset),
-            "--output",
-            str(output),
-        ]
-    elif command == "evaluate":
-        arguments = [
-            "evaluate",
-            "--config",
-            str(asset),
-            "--checkpoint",
-            str(asset),
-            "--output",
-            str(output),
-        ]
     else:
         arguments = [
             "prepare-cfd",

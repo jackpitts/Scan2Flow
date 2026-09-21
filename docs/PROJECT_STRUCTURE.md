@@ -28,9 +28,7 @@ Scan2Flow/
 ├── configs/
 │   ├── cfd-external.toml
 │   ├── cfd-internal.toml
-│   ├── evaluate.toml
-│   ├── README.md
-│   └── train.toml
+│   └── README.md
 ├── data/
 │   ├── annotations/
 │   │   └── README.md
@@ -48,10 +46,21 @@ Scan2Flow/
 │   │   └── videos/
 │   │       └── README.md
 │   └── README.md
+├── development/
+│   ├── configs/
+│   │   ├── evaluate.toml
+│   │   ├── README.md
+│   │   └── train.toml
+│   ├── evaluation/
+│   │   └── __init__.py
+│   ├── training/
+│   │   └── __init__.py
+│   ├── ARCHITECTURE.md
+│   ├── ECC_WORKFLOW.md
+│   └── ML_PIPELINE.md
 ├── docs/
 │   ├── CFD_GUIDE.md
-│   ├── ECC_WORKFLOW.md
-│   ├── ML_PIPELINE.md
+│   ├── CLI_REFERENCE.md
 │   └── PROJECT_STRUCTURE.md
 ├── examples/
 │   ├── calibration/
@@ -88,8 +97,6 @@ Scan2Flow/
 │       │   └── __init__.py
 │       ├── data/
 │       │   └── __init__.py
-│       ├── evaluation/
-│       │   └── __init__.py
 │       ├── ingestion/
 │       │   └── __init__.py
 │       ├── models/
@@ -99,8 +106,6 @@ Scan2Flow/
 │       ├── preprocessing/
 │       │   └── __init__.py
 │       ├── reconstruction/
-│       │   └── __init__.py
-│       ├── training/
 │       │   └── __init__.py
 │       ├── utils/
 │       │   └── __init__.py
@@ -118,6 +123,7 @@ Scan2Flow/
 │       └── test_cli.py
 ├── .gitattributes
 ├── .gitignore
+├── AGENTS.md
 ├── CONTRIBUTING.md
 ├── DOCUMENTATION.md
 ├── LICENSE
@@ -134,8 +140,8 @@ Scan2Flow/
 | `src/scan2flow/preprocessing/` | Shared masks, calibration transforms, units, frame selection and normalization |
 | `src/scan2flow/data/` | Manifest validation, family split audits, datasets, sampling and synthetic-data generation |
 | `src/scan2flow/models/` | Image/point encoders, fusion, surface decoders, CAD-feature heads and bundle interfaces |
-| `src/scan2flow/training/` | Training loop, loss composition, checkpoints and exact resume |
-| `src/scan2flow/evaluation/` | Surface/dimensional/topology metrics, baseline comparisons, slices and promotion checks |
+| `development/training/` | Training loop, loss composition, checkpoints and exact resume |
+| `development/evaluation/` | Surface/dimensional/topology metrics, baseline comparisons, slices and promotion checks |
 | `src/scan2flow/reconstruction/` | Pose estimation, scan registration and inference orchestration |
 | `src/scan2flow/cad/` | Analytic/freeform fitting, constrained B-rep construction, healing, validation and exporters |
 | `src/scan2flow/cfd/` | Fluid-region extraction, enclosure/caps, patch mapping and domain quality checks |
@@ -145,7 +151,9 @@ Scan2Flow/
 | `tests/integration/` | Stage boundaries and future native CAD/ML integration |
 | `tests/e2e/` | Installed CLI behavior and future capture-to-output regression cases |
 | `tests/fixtures/` | Tiny licensed/synthetic fixtures; no private or large capture assets |
-| `configs/` | Versioned training, evaluation and CFD-domain settings |
+| `configs/` | User CFD-domain templates |
+| `development/configs/` | Developer-only training/evaluation experiments |
+| `development/` | Architecture, ML design, ECC guidance and developer tooling; outside the runtime wheel |
 | `schemas/` | Versioned data, calibration, bundle and report contracts |
 | `examples/` | Readable CLI examples and deliberately incomplete sample records |
 | `data/raw/` | Immutable local image/video/LiDAR captures |
@@ -155,10 +163,10 @@ Scan2Flow/
 | `artifacts/` | Per-job reconstruction, training, evaluation and CFD outputs |
 | `notebooks/` | Optional experiments; production pipelines must run without notebook state |
 | `scripts/` | Future repeatable dataset/environment/maintenance utilities |
-| `docs/` | Architecture, ML, CFD and contributor tooling guidance |
+| `docs/` | User CLI reference, CFD guide and repository layout |
 | `.github/workflows/` | Automated scaffold checks; GPU/CAD/solver suites need explicit future environments |
 
-The main [technical documentation](../DOCUMENTATION.md) defines stage contracts
+The main [development plan](../DOCUMENTATION.md) defines scope, decisions and next steps
 and the [README](../README.md) defines current capabilities. Keep this inventory in
 sync when adding or moving files.
 
@@ -172,4 +180,4 @@ access and retention policy is defined. Neither is configured here.
 `pyproject.toml` defines the installable package and development tools.
 `MANIFEST.in` includes documentation, templates, schemas, examples and tests in the
 source distribution. Wheels contain the runtime Python package and license;
-repository documentation remains available on GitHub and in the source archive.
+training/evaluation code under `development/` is excluded from wheels. Repository documentation remains available on GitHub and in the source archive.
