@@ -199,8 +199,6 @@ lives under `development/`; it is not part of the end-user setup.
 ## Contributing and license
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, checks and review.
-The architecture was developed with [affaan-m/ECC](https://github.com/affaan-m/ECC);
-its use is recorded in [the developer workflow](development/ECC_WORKFLOW.md).
 
 Original code and documentation use the [MIT License](LICENSE). Third-party libraries,
 models and datasets retain their own terms; none are redistributed here.
