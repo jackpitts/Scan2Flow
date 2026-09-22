@@ -1,1 +1,1 @@
-"""Planned dataset manifests, CAD supervision, splitting, and synthetic-data pipelines."""
+"""Planned input data contracts for geometry inference."""

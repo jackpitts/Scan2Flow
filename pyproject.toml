@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "scan2flow"
 version = "0.1.0.dev0"
-description = "CLI and architecture scaffold for scan-to-CAD reconstruction and CFD preparation."
+description = "CLI scaffold for scan-to-CAD reconstruction and CFD preparation."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
